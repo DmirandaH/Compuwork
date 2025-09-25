@@ -10,7 +10,7 @@ import java.util.*;
 
 /**
  * Clase principal que gestiona un menú en consola
- * con validaciones robustas en entradas usando métodos reutilizables.
+ * con validaciones en entradas usando métodos reutilizables.
  */
 public class Main {
 
