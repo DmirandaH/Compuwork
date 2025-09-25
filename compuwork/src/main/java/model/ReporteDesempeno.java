@@ -5,11 +5,10 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 /**
- * Clase que representa un reporte de desempeño para un empleado.
- * Nota: usamos nombres sin acentos para evitar problemas con encoding/identificadores.
+ * Clase que genera reportes de desempeño para empleados.
+ * Se valida que el empleado no sea nulo y que la puntuación sea válida.
  */
 public class ReporteDesempeno {
     private Empleado empleado;
@@ -18,28 +17,39 @@ public class ReporteDesempeno {
     private String observaciones;
 
     public ReporteDesempeno(Empleado empleado, double puntuacion, String observaciones) {
-        if (empleado == null) {
-            throw new IllegalArgumentException("Empleado no puede ser nulo.");
+        try {
+            setEmpleado(empleado);
+            setPuntuacion(puntuacion);
+            this.fecha = LocalDate.now();
+            this.observaciones = observaciones;
+        } catch (Exception e) {
+            System.out.println("⚠️ Error al generar reporte: " + e.getMessage());
         }
-        this.empleado = empleado;
-        this.fecha = LocalDate.now();
-        this.puntuacion = puntuacion;
-        this.observaciones = observaciones;
     }
 
-    /**
-     * Genera una cadena con la información del reporte.
-     * @return texto del reporte
-     */
     public String generarReporte() {
-        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return String.format("Reporte (%s) - Empleado: %s (id=%d) - Puntuación: %.1f - Obs: %s",
-                fecha.format(f), empleado.getNombre(), empleado.getId(), puntuacion, observaciones);
+        return "📋 Reporte de " + empleado.getNombre() +
+               " (" + puntuacion + " puntos): " + observaciones +
+               " - Fecha: " + fecha;
     }
 
-    // Getters si se requieren
+    // Getters y Setters con validación
     public Empleado getEmpleado() { return empleado; }
     public LocalDate getFecha() { return fecha; }
     public double getPuntuacion() { return puntuacion; }
     public String getObservaciones() { return observaciones; }
+
+    public void setEmpleado(Empleado empleado) {
+        if (empleado == null) {
+            throw new IllegalArgumentException("El empleado no puede ser nulo.");
+        }
+        this.empleado = empleado;
+    }
+
+    public void setPuntuacion(double puntuacion) {
+        if (puntuacion < 0 || puntuacion > 10) {
+            throw new IllegalArgumentException("La puntuación debe estar entre 0 y 10.");
+        }
+        this.puntuacion = puntuacion;
+    }
 }
