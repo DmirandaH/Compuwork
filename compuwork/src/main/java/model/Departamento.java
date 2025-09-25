@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Representa un departamento que contiene empleados.
+ * Clase que representa un departamento.
+ * Se valida que el nombre no esté vacío y que los empleados sean válidos.
  */
 public class Departamento {
     private int id;
@@ -16,32 +17,41 @@ public class Departamento {
     private List<Empleado> empleados;
 
     public Departamento(int id, String nombre) {
-        this.id = id;
-        this.nombre = nombre;
-        this.empleados = new ArrayList<>();
+        empleados = new ArrayList<>();
+        try {
+            setId(id);
+            setNombre(nombre);
+        } catch (Exception e) {
+            System.out.println("⚠️ Error al crear departamento: " + e.getMessage());
+        }
     }
 
-    /**
-     * Agrega un empleado a la lista del departamento.
-     * Lanza excepción si empleado es null.
-     * Evita duplicados.
-     */
-    public void agregarEmpleado(Empleado e) throws Exception {
-        if (e == null) {
-            throw new Exception("Empleado no válido.");
-        }
-        if (!empleados.contains(e)) {
+    public void agregarEmpleado(Empleado e) {
+        try {
+            if (e == null) {
+                throw new IllegalArgumentException("Empleado no válido.");
+            }
             empleados.add(e);
+        } catch (Exception ex) {
+            System.out.println("⚠️ No se pudo agregar empleado: " + ex.getMessage());
         }
-    }
-
-    public List<Empleado> getEmpleados() {
-        return empleados;
-    }
-
-    public String getNombre() {
-        return nombre;
     }
 
     public int getId() { return id; }
+    public String getNombre() { return nombre; }
+    public List<Empleado> getEmpleados() { return empleados; }
+
+    public void setId(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que 0.");
+        }
+        this.id = id;
+    }
+
+    public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty() || nombre.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del departamento no puede estar vacío ni contener números.");
+        }
+        this.nombre = nombre;
+    }
 }
