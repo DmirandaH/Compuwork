@@ -5,22 +5,32 @@
 package model;
 
 /**
- * Empleado temporal con horas de contrato.
+ * Representa a un empleado temporal.
+ * Se valida que las horas de contrato sean positivas.
  */
 public class EmpleadoTemporal extends Empleado {
     private int horasContrato;
 
     public EmpleadoTemporal(int id, String nombre, int horasContrato) {
         super(id, nombre, "Temporal");
-        this.horasContrato = horasContrato;
+        try {
+            setHorasContrato(horasContrato);
+        } catch (Exception e) {
+            System.out.println("⚠️ Error al asignar horas de contrato: " + e.getMessage());
+        }
     }
 
     @Override
     public ReporteDesempeno calcularDesempeno() {
-        double puntuacion = 7.5;
-        String observaciones = "Buen rendimiento en tareas asignadas.";
-        return new ReporteDesempeno(this, puntuacion, observaciones);
+        return new ReporteDesempeno(this, 7.5, "Buen rendimiento en tareas asignadas.");
     }
 
     public int getHorasContrato() { return horasContrato; }
+
+    public void setHorasContrato(int horasContrato) {
+        if (horasContrato <= 0) {
+            throw new IllegalArgumentException("Las horas de contrato deben ser mayores que 0.");
+        }
+        this.horasContrato = horasContrato;
+    }
 }
