@@ -5,8 +5,8 @@
 package model;
 
 /**
- * Clase base abstracta para empleados.
- * Contiene atributos comunes y obliga a implementar calcularDesempeno().
+ * Clase abstracta que representa a un empleado genérico.
+ * Se valida que los datos sean correctos al asignarlos.
  */
 public abstract class Empleado {
     private int id;
@@ -14,38 +14,47 @@ public abstract class Empleado {
     private String tipo;
     private Departamento departamento;
 
-    /**
-     * Constructor básico.
-     * @param id identificador único
-     * @param nombre nombre completo
-     * @param tipo "Permanente" o "Temporal"
-     */
     public Empleado(int id, String nombre, String tipo) {
-        this.id = id;
-        this.nombre = nombre;
-        this.tipo = tipo;
-    }
-
-    /**
-     * Asigna el empleado a un departamento. Lanza excepción si el departamento es null.
-     */
-    public void asignarDepartamento(Departamento depto) throws Exception {
-        if (depto == null) {
-            throw new Exception("Departamento no válido.");
+        try {
+            setId(id);
+            setNombre(nombre);
+            this.tipo = tipo;
+        } catch (Exception e) {
+            System.out.println("⚠️ Error al crear empleado: " + e.getMessage());
         }
-        this.departamento = depto;
-        // agregramos al departamento (el método puede lanzar excepción)
-        depto.agregarEmpleado(this);
     }
 
-    /**
-     * Cada subclase define cómo calcular el reporte de desempeño.
-     */
+    public void asignarDepartamento(Departamento depto) {
+        try {
+            if (depto == null) {
+                throw new IllegalArgumentException("Departamento no válido.");
+            }
+            this.departamento = depto;
+            depto.agregarEmpleado(this);
+        } catch (Exception e) {
+            System.out.println("⚠️ No se pudo asignar el departamento: " + e.getMessage());
+        }
+    }
+
     public abstract ReporteDesempeno calcularDesempeno();
 
-    // === Getters ===
+    // Getters y Setters con validación
     public int getId() { return id; }
     public String getNombre() { return nombre; }
     public String getTipo() { return tipo; }
     public Departamento getDepartamento() { return departamento; }
+
+    public void setId(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que 0.");
+        }
+        this.id = id;
+    }
+
+    public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty() || nombre.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío ni contener números.");
+        }
+        this.nombre = nombre;
+    }
 }
