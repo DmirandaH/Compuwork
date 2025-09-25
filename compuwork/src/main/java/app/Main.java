@@ -10,7 +10,7 @@ import java.util.*;
 
 /**
  * Clase principal que gestiona un menú en consola
- * para manejar empleados, departamentos y reportes.
+ * con validaciones robustas en entradas usando métodos reutilizables.
  */
 public class Main {
 
@@ -30,9 +30,7 @@ public class Main {
             System.out.println("5. Generar reporte de desempeño");
             System.out.println("6. Listar empleados");
             System.out.println("0. Salir");
-            System.out.print("Elige una opción: ");
-            opcion = sc.nextInt();
-            sc.nextLine(); // limpiar buffer
+            opcion = leerEntero("Elige una opción: ");
 
             switch (opcion) {
                 case 1 -> crearDepartamento();
@@ -42,7 +40,7 @@ public class Main {
                 case 5 -> generarReporte();
                 case 6 -> listarEmpleados();
                 case 0 -> System.out.println("Saliendo del sistema...");
-                default -> System.out.println("Opción inválida.");
+                default -> System.out.println("⚠️ Opción inválida.");
             }
 
         } while (opcion != 0);
@@ -51,70 +49,55 @@ public class Main {
     // ================== MÉTODOS DEL MENÚ ==================
 
     private static void crearDepartamento() {
-        System.out.print("Ingrese ID del departamento: ");
-        int id = sc.nextInt(); sc.nextLine();
-        System.out.print("Ingrese nombre del departamento: ");
-        String nombre = sc.nextLine();
+        int id = leerEntero("Ingrese ID del departamento: ");
+        String nombre = leerTexto("Ingrese nombre del departamento: ");
 
         departamentos.add(new Departamento(id, nombre));
-        System.out.println("Departamento creado exitosamente.");
+        System.out.println("✅ Departamento creado exitosamente.");
     }
 
     private static void crearEmpleadoPermanente() {
-        System.out.print("Ingrese ID del empleado: ");
-        int id = sc.nextInt(); sc.nextLine();
-        System.out.print("Ingrese nombre: ");
-        String nombre = sc.nextLine();
-        System.out.print("Ingrese salario mensual: ");
-        double salario = sc.nextDouble();
+        int id = leerEntero("Ingrese ID del empleado: ");
+        String nombre = leerTexto("Ingrese nombre: ");
+        double salario = leerDouble("Ingrese salario mensual: ");
 
         empleados.add(new EmpleadoPermanente(id, nombre, salario));
-        System.out.println("Empleado permanente creado.");
+        System.out.println("✅ Empleado permanente creado.");
     }
 
     private static void crearEmpleadoTemporal() {
-        System.out.print("Ingrese ID del empleado: ");
-        int id = sc.nextInt(); sc.nextLine();
-        System.out.print("Ingrese nombre: ");
-        String nombre = sc.nextLine();
-        System.out.print("Ingrese horas de contrato: ");
-        int horas = sc.nextInt();
+        int id = leerEntero("Ingrese ID del empleado: ");
+        String nombre = leerTexto("Ingrese nombre: ");
+        int horas = leerEntero("Ingrese horas de contrato: ");
 
         empleados.add(new EmpleadoTemporal(id, nombre, horas));
-        System.out.println("Empleado temporal creado.");
+        System.out.println("✅ Empleado temporal creado.");
     }
 
     private static void asignarEmpleadoADepartamento() {
-        System.out.print("Ingrese ID del empleado: ");
-        int idEmpleado = sc.nextInt();
-        System.out.print("Ingrese ID del departamento: ");
-        int idDepto = sc.nextInt();
+        int idEmpleado = leerEntero("Ingrese ID del empleado: ");
+        int idDepto = leerEntero("Ingrese ID del departamento: ");
 
         Empleado emp = buscarEmpleado(idEmpleado);
         Departamento depto = buscarDepartamento(idDepto);
 
         if (emp != null && depto != null) {
-            try {
-                emp.asignarDepartamento(depto);
-                System.out.println("Empleado asignado a departamento.");
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-            }
+            emp.asignarDepartamento(depto);
+            System.out.println("✅ Empleado asignado a departamento.");
         } else {
-            System.out.println("Empleado o departamento no encontrado.");
+            System.out.println("⚠️ Empleado o departamento no encontrado.");
         }
     }
 
     private static void generarReporte() {
-        System.out.print("Ingrese ID del empleado: ");
-        int idEmpleado = sc.nextInt();
+        int idEmpleado = leerEntero("Ingrese ID del empleado: ");
 
         Empleado emp = buscarEmpleado(idEmpleado);
         if (emp != null) {
             ReporteDesempeno reporte = emp.calcularDesempeno();
             System.out.println(reporte.generarReporte());
         } else {
-            System.out.println("Empleado no encontrado.");
+            System.out.println("⚠️ Empleado no encontrado.");
         }
     }
 
@@ -140,5 +123,53 @@ public class Main {
             if (d.getId() == id) return d;
         }
         return null;
+    }
+
+    // ================== MÉTODOS DE VALIDACIÓN REUTILIZABLES ==================
+
+    /** Lee un entero de forma segura con validación */
+    private static int leerEntero(String mensaje) {
+        int valor;
+        while (true) {
+            try {
+                System.out.print(mensaje);
+                valor = sc.nextInt();
+                sc.nextLine(); // limpiar buffer
+                return valor;
+            } catch (InputMismatchException e) {
+                System.out.println("⚠️ Error: Ingrese un número entero válido.");
+                sc.nextLine(); // limpiar entrada inválida
+            }
+        }
+    }
+
+    /** Lee un double de forma segura con validación */
+    private static double leerDouble(String mensaje) {
+        double valor;
+        while (true) {
+            try {
+                System.out.print(mensaje);
+                valor = sc.nextDouble();
+                sc.nextLine(); // limpiar buffer
+                return valor;
+            } catch (InputMismatchException e) {
+                System.out.println("⚠️ Error: Ingrese un número decimal válido.");
+                sc.nextLine(); // limpiar entrada inválida
+            }
+        }
+    }
+
+    /** Lee un texto (string) validando que no esté vacío */
+    private static String leerTexto(String mensaje) {
+        String valor;
+        while (true) {
+            System.out.print(mensaje);
+            valor = sc.nextLine().trim();
+            if (!valor.isEmpty() && !valor.matches(".*\\d.*")) { // no debe contener números
+                return valor;
+            } else {
+                System.out.println("⚠️ Error: Ingrese un texto válido (sin números).");
+            }
+        }
     }
 }
