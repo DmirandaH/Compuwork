@@ -6,25 +6,37 @@ package model;
 
 /**
  * Representa a un empleado temporal.
- * Se valida que las horas de contrato sean positivas.
+ * Se valida la cantidad de horas contratadas.
  */
 public class EmpleadoTemporal extends Empleado {
     private int horasContrato;
 
+    /**
+     * Constructor de EmpleadoTemporal.
+     * @param id identificador único del empleado.
+     * @param nombre nombre del empleado.
+     * @param horasContrato cantidad de horas contratadas.
+     */
     public EmpleadoTemporal(int id, String nombre, int horasContrato) {
         super(id, nombre, "Temporal");
         try {
             setHorasContrato(horasContrato);
         } catch (Exception e) {
             System.out.println("⚠️ Error al asignar horas de contrato: " + e.getMessage());
+            this.horasContrato = 40; // valor por defecto (ejemplo)
         }
     }
 
+    /**
+     * Implementación de cálculo de desempeño para empleado temporal.
+     * Retorna un reporte con una puntuación predefinida y descripción.
+     */
     @Override
     public ReporteDesempeno calcularDesempeno() {
         return new ReporteDesempeno(this, 7.5, "Buen rendimiento en tareas asignadas.");
     }
 
+    // Getter y Setter con validación
     public int getHorasContrato() { return horasContrato; }
 
     public void setHorasContrato(int horasContrato) {
