@@ -9,13 +9,18 @@ import java.util.List;
 
 /**
  * Clase que representa un departamento.
- * Se valida que el nombre no esté vacío y que los empleados sean válidos.
+ * Incluye validaciones en ID, nombre y manejo de empleados.
  */
 public class Departamento {
     private int id;
     private String nombre;
     private List<Empleado> empleados;
 
+    /**
+     * Constructor del departamento con validaciones.
+     * @param id identificador único del departamento
+     * @param nombre nombre del departamento
+     */
     public Departamento(int id, String nombre) {
         empleados = new ArrayList<>();
         try {
@@ -23,13 +28,22 @@ public class Departamento {
             setNombre(nombre);
         } catch (Exception e) {
             System.out.println("⚠️ Error al crear departamento: " + e.getMessage());
+            this.id = 0;
+            this.nombre = "Desconocido";
         }
     }
 
+    /**
+     * Agrega un empleado al departamento, evitando duplicados.
+     * @param e empleado a agregar
+     */
     public void agregarEmpleado(Empleado e) {
         try {
             if (e == null) {
                 throw new IllegalArgumentException("Empleado no válido.");
+            }
+            if (empleados.contains(e)) {
+                throw new IllegalArgumentException("El empleado ya está en este departamento.");
             }
             empleados.add(e);
         } catch (Exception ex) {
@@ -37,10 +51,12 @@ public class Departamento {
         }
     }
 
+    // Getters
     public int getId() { return id; }
     public String getNombre() { return nombre; }
     public List<Empleado> getEmpleados() { return empleados; }
 
+    // Setters con validación
     public void setId(int id) {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor que 0.");
