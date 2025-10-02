@@ -1,0 +1,13 @@
+# Ignorar el directorio de compilacion
+/target/
+
+# Ignorar archivos temporales
+*.class
+*.jar
+*.war
+
+# Ignorar archivos del IDE (si usas IntelliJ, NetBeans, o Eclipse)
+.idea/
+*.iml
+/nbproject/
+/bin/
