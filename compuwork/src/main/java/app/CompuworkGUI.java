@@ -197,4 +197,3 @@ public class CompuworkGUI extends JFrame {
         SwingUtilities.invokeLater(() -> new CompuworkGUI().setVisible(true));
     }
 }
-
